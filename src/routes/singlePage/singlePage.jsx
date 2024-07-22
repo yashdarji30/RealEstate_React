@@ -1,23 +1,66 @@
-import "./singlePage.scss";
-import Slider from "../../components/slider/Slider";
-import Map from "../../components/map/Map";
-import { singlePostData, userData } from "../../lib/dummydata";
-import { useLoaderData } from "react-router-dom";
-import DOMPurify  from "dompurify";
-function SinglePage() {
-  
-  const post = useLoaderData();
-  // console.log(post)
+import Slider from "../../components/Slider/Slider";
+import "./Singlepage.scss";
+import Map from "../../components/Map/Map";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import DOMPurify from "dompurify";
+import apiRequest from "../../lib/apiRequest";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import ChatBox from "../../components/ChatBox/ChatBox";
+import noAvatar from "../../../public/noavatar.jpg";
 
+const Singlepage = () => {
+  const post = useLoaderData();
+  const [saved, setSaved] = useState(post.isSaved);
+  const { currentUser } = useContext(AuthContext);
+  const [showChatBox, setShowChatBox] = useState(false);
+  const [newChat, setNewChat] = useState(false);
+  const [chatData, setChatData] = useState(null);
+
+  const navigate = useNavigate();
+
+  console.log(post.user.id);
+  const handleSendMessage = async () => {
+    try {
+      console.log("in the form");
+
+      const res = await apiRequest().post("/chats", {
+        receiverId: post.user.id,
+      });
+
+      console.log("chat created");
+
+      setChatData(res.data);
+      setNewChat(false);
+    } catch (error) {
+      console.error("Failed to create new chat:", error);
+    }
+
+    setNewChat((prev) => !prev);
+    console.log(newChat);
+    setShowChatBox((prev) => !prev);
+  };
+  const handleSave = async () => {
+    if (!currentUser) {
+      navigate("/login");
+    }
+    setSaved((prev) => !prev);
+    try {
+      await apiRequest().post("/users/save", { postId: post.id });
+    } catch (err) {
+      console.log(err);
+      setSaved((prev) => !prev);
+    }
+  };
   return (
     <div className="singlePage">
       <div className="details">
         <div className="wrapper">
-          <Slider images={post.images} />
+          <Slider images={post.imges} />
           <div className="info">
             <div className="top">
               <div className="post">
-                <h1>{singlePostData.title}</h1>
+                <h1>{post.title}</h1>
                 <div className="address">
                   <img src="/pin.png" alt="" />
                   <span>{post.address}</span>
@@ -25,13 +68,17 @@ function SinglePage() {
                 <div className="price">$ {post.price}</div>
               </div>
               <div className="user">
-                <img src={post.user.avatar} alt="" />
+                 <img src={post.user.avatar || noAvatar} alt="" />
+
                 <span>{post.user.username}</span>
               </div>
             </div>
-            <div className="bottom" dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(post.postDetail.desc),
-              }}></div>
+            <div
+              className="bottom"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(post.postDetail.desc),
+              }}
+            ></div>
           </div>
         </div>
       </div>
@@ -43,21 +90,22 @@ function SinglePage() {
               <img src="/utility.png" alt="" />
               <div className="featureText">
                 <span>Utilities</span>
-                {
-                  post.postDetail.utilities === "owner" ?(
-                  <p>Renter is responsible</p> 
-                  ) : (
+                {post.postDetail.utilities === "owner" ? (
                   <p>Owner is responsible</p>
-                  )}
+                ) : (
+                  <p>Tenant is responsible</p>
+                )}
               </div>
             </div>
             <div className="feature">
               <img src="/pet.png" alt="" />
               <div className="featureText">
                 <span>Pet Policy</span>
-                {
-                  post.postDetail.pet === "allowed" ? <p>Pets Allowed</p> : <p>Pets Not Allowed</p>
-                }
+                {post.postDetail.pet === "allowed" ? (
+                  <p>Pets Allowed</p>
+                ) : (
+                  <p>Pets not Allowed</p>
+                )}
               </div>
             </div>
             <div className="feature">
@@ -89,7 +137,12 @@ function SinglePage() {
               <img src="/school.png" alt="" />
               <div className="featureText">
                 <span>School</span>
-                <p>{post.postDetail.school > 999 ? post.postDetail.school/1000 + "km" : post.postDetail.school + "m"} away</p>
+                <p>
+                  {post.postDetail.school > 999
+                    ? post.postDetail.school / 1000 + "km"
+                    : post.postDetail.school + "m"}{" "}
+                  away
+                </p>
               </div>
             </div>
             <div className="feature">
@@ -108,23 +161,41 @@ function SinglePage() {
             </div>
           </div>
           <p className="title">Location</p>
-          <div className="mapContainer">
-            <Map items={[post]} />
-          </div>
-          <div className="buttons">
-            <button>
-              <img src="/chat.png" alt="" />
-              Send a Message
-            </button>
-            <button>
-              <img src="/save.png" alt="" />
-              Save the Place
-            </button>
-          </div>
+
+          {showChatBox ? ( // Render the ChatBox component if showChat is true
+            <ChatBox
+              currentUser={currentUser}
+              receiver={post.user}
+              chatData={chatData}
+              newChat={newChat}
+              setNewChat={setNewChat}
+              setShowChatBox={setShowChatBox} // Close the chat box when the user closes it
+            />
+          ) : (
+            <>
+              <div className="mapContainer2">
+                <Map items={[post]} />
+              </div>
+              <div className="buttons">
+                <button onClick={handleSendMessage}>
+                  <img src="/chat.png" alt="" />
+                  Send a Message
+                </button>
+                <button
+                  onClick={handleSave}
+                  style={{
+                    backgroundColor: saved ? "#fece51" : "white",
+                  }}
+                >
+                  <img src="/save.png" alt="" />
+                  {saved ? "Place Saved" : "Save the Place"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
-}
-
-export default SinglePage;
+};
+export default Singlepage;

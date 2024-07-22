@@ -1,14 +1,10 @@
-import { useContext } from "react";
-import SearchBar from "../../components/searchBar/SearchBar";
-import "./homePage.scss";
-import { AuthContext } from "../../context/AuthContext.jsx";
-function HomePage() {
-  const {currentUser} = useContext(AuthContext);
+import SearchBar from "../../components/SearchBar/SearchBar";
+import "./Homepage.scss";
 
-  console.log(currentUser);
-  return ( 
+const Homepage = () => {
+  return (
     <div className="homePage">
-      <div className="textContainer"> 
+      <div className="textContainer">
         <div className="wrapper">
           <h1 className="title">Find Real Estate & Get Your Dream Place</h1>
           <p>
@@ -39,6 +35,6 @@ function HomePage() {
       </div>
     </div>
   );
-}
+};
 
-export default HomePage;
+export default Homepage;

@@ -2,8 +2,6 @@
 
 .searchBar {
   .type {
-
-
     button {
       padding: 16px 36px;
       border: 1px solid #999;
@@ -44,6 +42,7 @@
       border: none;
       padding: 0px 10px;
       width: 200px;
+      height: 100%;
 
       @include lg {
         padding: 0px 5px;
@@ -61,8 +60,8 @@
         }
       }
 
-      @include sm{
-        width: auto;
+      @include sm {
+        width: 100%;
         &:nth-child(2),
         &:nth-child(3) {
           width: auto;
@@ -72,19 +71,56 @@
       }
     }
 
-    button {
-      border: none;
-      cursor: pointer;
-      background-color: #fece51;
+    a {
       flex: 1;
+      background-color: #fece51;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      @include sm{
-        padding: 10px;
+      button {
+        border: none;
+        cursor: pointer;
+        background-color: #fece51;
+
+        @include sm {
+          padding: 10px;
+        }
+
+        img {
+          width: 24px;
+          height: 24px;
+        }
       }
+    }
+  }
 
-      img {
-        width: 24px;
-        height: 24px;
+  .input-group {
+    position: relative;
+
+    .suggestions {
+      position: absolute;
+      width: 100%;
+      top: 100%;
+      left: 0;
+      right: 0;
+      border: 1px solid #999;
+      border-top: none;
+      background-color: white;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        padding: 10px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #f0f0f0;
+        }
       }
     }
   }

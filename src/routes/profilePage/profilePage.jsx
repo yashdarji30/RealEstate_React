@@ -1,13 +1,14 @@
-import Chat from "../../components/chat/Chat";
+import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
+import Chat from "../../components/Chat/Chat";
 import List from "../../components/list/List";
 import "./profilePage.scss";
-import apiRequest from "../../lib/apiRequest";
-import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
 import { Suspense, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import apiRequest from "../../lib/apiRequest";
 
-function ProfilePage() {
+const ProfilePage = () => {
   const data = useLoaderData();
+  console.log(data);
 
   const { updateUser, currentUser } = useContext(AuthContext);
 
@@ -15,7 +16,7 @@ function ProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await apiRequest.post("/auth/logout");
+      await apiRequest().post("/auth/logout");
       updateUser(null);
       navigate("/");
     } catch (err) {
@@ -47,7 +48,7 @@ function ProfilePage() {
           </div>
           <div className="title">
             <h1>My List</h1>
-            <Link to="/add">
+            <Link to="/post/add">
               <button>Create New Post</button>
             </Link>
           </div>
@@ -79,13 +80,12 @@ function ProfilePage() {
               resolve={data.chatResponse}
               errorElement={<p>Error loading chats!</p>}
             >
-              {(chatResponse) => <Chat chats={chatResponse.data}/>}
+              {(chatResponse) => <Chat chats={chatResponse.data} />}
             </Await>
           </Suspense>
         </div>
       </div>
     </div>
   );
-}
-
-export default ProfilePage; 
+};
+export default ProfilePage;

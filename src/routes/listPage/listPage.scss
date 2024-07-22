@@ -1,30 +1,48 @@
-@import "../../responsive.scss";
-
 .listPage {
   display: flex;
   height: 100%;
+}
 
-  .listContainer {
-    flex: 3;
-    height: 100%;
+.listContainer {
+  flex: 3;
+  height: 100%;
 
-    .wrapper{
-      height: 100%;
-      padding-right: 50px;
+  .wrapper {
+    height: 100vh;
+    padding-right: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    overflow-y: scroll;
+    padding-bottom: 50px;
+
+    .loader-container {
       display: flex;
-      flex-direction: column;
-      gap: 50px;
-      overflow-y: scroll;
-      padding-bottom: 50px;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* Adjust this value as needed */
     }
   }
-  .mapContainer {
-    flex: 2;
-    height: 100%;
-    background-color: #fcf5f3;
+}
 
-    @include md{
-      display: none;
-    }
+.mapContainer {
+  flex: 2;
+  height: 100%;
+  background-color: #fcf5f3;
+  background-image: url("https://images.pexels.com/photos/3747562/pexels-photo-3747562.jpeg?auto=compress&cs=tinysrgb&w=600"); /* Update the path */
+  background-size: cover;
+  background-position: center;
+  border-radius: 4%;
+  position: relative;
+
+  .loader-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust this value as needed */
   }
 }

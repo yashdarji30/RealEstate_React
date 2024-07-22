@@ -1,7 +1,8 @@
 import { useState } from "react";
-import "./newPostPage.scss";
+import "./NewPostPage.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+
 import apiRequest from "../../lib/apiRequest";
 import UploadWidget from "../../components/uploadWidget/UploadWidget";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +12,7 @@ function NewPostPage() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +20,7 @@ function NewPostPage() {
     const inputs = Object.fromEntries(formData);
 
     try {
-      const res = await apiRequest.post("/posts", {
+      const res = await apiRequest().post("/post", {
         postData: {
           title: inputs.title,
           price: parseInt(inputs.price),
@@ -44,7 +45,9 @@ function NewPostPage() {
           restaurant: parseInt(inputs.restaurant),
         },
       });
-      navigate("/"+res.data.id)
+      console.log(res);
+      console.log(res.data.data.id);
+      navigate("/" + res.data.data.id);
     } catch (err) {
       console.log(err);
       setError(error);
@@ -164,8 +167,8 @@ function NewPostPage() {
         <UploadWidget
           uwConfig={{
             multiple: true,
-            cloudName: "lamadev",
-            uploadPreset: "estate",
+            cloudName: "dmjcyeavd",
+            uploadPreset: "realEstate",
             folder: "posts",
           }}
           setState={setImages}
